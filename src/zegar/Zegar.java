@@ -1,5 +1,7 @@
 package zegar;
 
+import java.awt.Dimension;
+import java.awt.Toolkit;
 import java.util.Calendar;
 import java.util.GregorianCalendar;
 
@@ -13,9 +15,9 @@ public class Zegar extends javax.swing.JDialog {
     
     public Zegar(java.awt.Frame parent, boolean modal) {
         super(parent, modal);
-        initComponents();           // starting window dimension 351, 175; second win dim 351, 500; start point 1000, 35;
+        initComponents();           // starting window dimension 351, 175; win dim with calendar 351, 500; 
         
-        extendCounter = 0;
+        setPosition();
               
         createDayLabels();
        
@@ -25,67 +27,6 @@ public class Zegar extends javax.swing.JDialog {
         myClock = new Clock(dateTextField, hourTextField);
         
         myClock.start();
-        
-      /*  new Thread(){
-            
-            @Override
-            public void run(){
-                while(true){
-                    Calendar cal = new GregorianCalendar();
-                    
-                    int day = cal.get(Calendar.DAY_OF_MONTH);
-                    int month  = cal.get(Calendar.MONTH) + 1;
-                    int year = cal.get(Calendar.YEAR);
-                    int dayOfWeek = cal.get(Calendar.DAY_OF_WEEK);
-                    
-                    int hour = cal.get(Calendar.HOUR_OF_DAY);
-                    int minute = cal.get(Calendar.MINUTE);
-                    int sec = cal.get(Calendar.SECOND);
-                    
-                    String data = day+ "." + month + "." + year;//Integer.toString(day)+ ":" + Integer.toString(month)+ ":" + Integer.toString(year);
-                    switch(dayOfWeek){
-                        case 1: data += " SUN"; break;
-                        case 2: data += " MON"; break;
-                        case 3: data += " TUE";  break;
-                        case 4: data += " WED";  break;
-                        case 5: data += " THU"; break;
-                        case 6: data += " FRI";  break;
-                        case 7: data += " SAT"; break;
-                    }
-                    
-                    String godz;
-                    if(minute < 10){
-                        
-                        godz = Integer.toString(hour)+ ":0" + Integer.toString(minute)+ ":" ;
-                    }
-                    else godz = Integer.toString(hour)+ ":" + Integer.toString(minute)+ ":" ;
-                    
-                    if( sec == 1) 
-                        godz += "0 " + Integer.toString(sec);      // dodanie zera przed sekundę 
-                                                                  //
-                    else if(sec < 10 && !(sec ==1))              //
-                        godz += "0" + Integer.toString(sec);    //  mniejszą niz 10  
-                    
-                    else if(sec > 9 && sec < 20) 
-                        godz += dodanieSpacji(sec);
-                    
-                    else if(sec % 10 == 1) 
-                        godz += dodanieZera(sec); // dodanie spacji między cyfry liczby konczącej się na '1'
-                    
-                    else 
-                        godz += Integer.toString(sec);
-                    
-                    dateTextField.setText(data);
-                    hourTextField.setText(godz);
-                    
-                    try{
-                        Thread.sleep(1000);
-                    }
-                    catch(InterruptedException e){} // Do nothing, because there is no other thread
-                    
-                }
-            } 
-        }.start();  */
   
     }
     
@@ -237,21 +178,21 @@ public class Zegar extends javax.swing.JDialog {
     }//GEN-LAST:event_exitButtonMouseReleased
 
     private void extendButtonMouseReleased(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_extendButtonMouseReleased
-        if(extendCounter % 2 == 0){
+        if(!extendBool){
             
-            this.setBounds(1000, 35, 351, 500);
+            this.setBounds((int)this.startPosX, (int)this.startPosY, 351, 500);
             
             extendButton.setIcon(new javax.swing.ImageIcon(getClass().getResource("/obrazy/up.png")));
             
-            extendCounter += 1;
+            extendBool = true;
         }
         else {
             
-            this.setBounds(1000, 35, 351, 175);
+            this.setBounds((int)this.startPosX, (int)this.startPosY, 351, 175);
             
             extendButton.setIcon(new javax.swing.ImageIcon(getClass().getResource("/obrazy/down.png")));
             
-            extendCounter += 1;
+            extendBool = false;
         }
         
     }//GEN-LAST:event_extendButtonMouseReleased
@@ -319,7 +260,9 @@ public class Zegar extends javax.swing.JDialog {
     private javax.swing.JLabel tuesdayLabel;
     private javax.swing.JLabel wednesdayLabel;
     // End of variables declaration//GEN-END:variables
-    private int extendCounter;
+    private boolean extendBool = false;
+    private double startPosX, startPosY;
+    
     private javax.swing.JLabel[] labelArray;
     private DayWindows myCalendar;
     private Thread myClock;
@@ -348,5 +291,14 @@ public class Zegar extends javax.swing.JDialog {
 
             jPanel2.add(labelArray[i]);
         }
+    }
+
+    private void setPosition() {
+        Dimension screenSize = Toolkit.getDefaultToolkit().getScreenSize();
+        
+        this.startPosX = screenSize.getWidth() - this.getSize().getWidth() - 30;
+        this.startPosY = 30;
+        
+        this.setLocation((int) this.startPosX, (int) this.startPosY);
     }
 }
