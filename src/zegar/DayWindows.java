@@ -16,8 +16,7 @@ public class DayWindows {
         
         this.daysArray = daysArray;  
         this.frame = frame;
-        
-       // setupCalendar();
+       
     }
     
     public void setupCalendar(){
@@ -33,12 +32,15 @@ public class DayWindows {
         i -= 1; //because first day in week in class Calendar is Sunday ( in my project 1st is monday)
         
         for (int day = tempDate.get(Calendar.DAY_OF_MONTH); day <= tempDate.getActualMaximum(Calendar.DAY_OF_MONTH); day++){
+            i++;
+            if(i-2 <0) // if first day of month is Sunday
+                continue;
             
             if(currentDate.get(Calendar.DAY_OF_MONTH) == day)
-                daysArray[i-1].setFont(new java.awt.Font("High Tower Text", 3, 45));
+                daysArray[i-2].setFont(new java.awt.Font("High Tower Text", 3, 45));
             
-            daysArray[i-1].setText(Integer.toString(day)); //i-1 because arrays are counting from 0, not 1;
-            i++;
+            daysArray[i-2].setText(Integer.toString(day)); //i-1 because arrays are counting from 0, not 1;
+            
         }
     }
     
