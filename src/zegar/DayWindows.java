@@ -37,7 +37,7 @@ public class DayWindows {
                 continue;
             
             if(currentDate.get(Calendar.DAY_OF_MONTH) == day)
-                daysArray[i-2].setFont(new java.awt.Font("High Tower Text", 3, 45));
+                daysArray[i-2].setIcon(new javax.swing.ImageIcon(getClass().getResource("/obrazy/currentDay.png")));
             
             daysArray[i-2].setText(Integer.toString(day)); //i-1 because arrays are counting from 0, not 1;
             

@@ -4,6 +4,7 @@ import java.awt.Dimension;
 import java.awt.Toolkit;
 import java.util.Calendar;
 import java.util.GregorianCalendar;
+import javax.swing.Icon;
 
 /**
  *
@@ -164,8 +165,6 @@ public class Zegar extends javax.swing.JDialog {
         jPanel2.setPreferredSize(new java.awt.Dimension(340, 270));
         jPanel2.setLayout(new java.awt.GridLayout(5, 7));
         CalendarInternalFrame.getContentPane().add(jPanel2, new org.netbeans.lib.awtextra.AbsoluteConstraints(-2, 24, -1, -1));
-
-        backgroundInternal.setIcon(new javax.swing.ImageIcon(getClass().getResource("/obrazy/dayWindow.png"))); // NOI18N
         CalendarInternalFrame.getContentPane().add(backgroundInternal, new org.netbeans.lib.awtextra.AbsoluteConstraints(0, 25, 333, 267));
 
         getContentPane().add(CalendarInternalFrame, new org.netbeans.lib.awtextra.AbsoluteConstraints(0, 175, -1, 325));
@@ -197,6 +196,47 @@ public class Zegar extends javax.swing.JDialog {
         
     }//GEN-LAST:event_extendButtonMouseReleased
 
+        
+    private void createDayLabels() {
+
+        labelArray = new javax.swing.JLabel[35];
+        
+        for(int i = 0; i < 35; i++){
+            labelArray[i] = new javax.swing.JLabel();
+            
+            labelArray[i].setFont(new java.awt.Font("High Tower Text", 3, 35));
+            
+            labelArray[i].setHorizontalAlignment(javax.swing.SwingConstants.CENTER);
+
+            labelArray[i].setVerticalAlignment(javax.swing.SwingConstants.TOP);
+
+            labelArray[i].setMaximumSize(new java.awt.Dimension(48, 61));
+
+            labelArray[i].setMinimumSize(new java.awt.Dimension(48, 61));
+
+            labelArray[i].setIcon(new javax.swing.ImageIcon(getClass().getResource("/obrazy/dayWithoutEvent.png")));
+
+            labelArray[i].setIconTextGap(-39);
+            
+            labelArray[i].setName(""); // NOI18N
+
+            labelArray[i].setPreferredSize(new java.awt.Dimension(48, 61));
+            
+
+            jPanel2.add(labelArray[i]);
+        }
+    }
+
+    private void setPosition() {
+        Dimension screenSize = Toolkit.getDefaultToolkit().getScreenSize();
+        
+        this.startPosX = screenSize.getWidth() - this.getSize().getWidth() - 30;
+        this.startPosY = 30;
+        
+        this.setLocation((int) this.startPosX, (int) this.startPosY);
+    }
+
+    
     /**
      * @param args the command line arguments
      */
@@ -267,38 +307,4 @@ public class Zegar extends javax.swing.JDialog {
     private DayWindows myCalendar;
     private Thread myClock;
     
-    
-    private void createDayLabels() {
-
-        labelArray = new javax.swing.JLabel[35];
-        
-        for(int i = 0; i < 35; i++){
-            labelArray[i] = new javax.swing.JLabel();
-            
-            labelArray[i].setFont(new java.awt.Font("High Tower Text", 3, 30));
-            
-            labelArray[i].setHorizontalAlignment(javax.swing.SwingConstants.CENTER);
-
-            labelArray[i].setVerticalAlignment(javax.swing.SwingConstants.TOP);
-
-            labelArray[i].setMaximumSize(new java.awt.Dimension(48, 61));
-
-            labelArray[i].setMinimumSize(new java.awt.Dimension(48, 61));
-
-            labelArray[i].setName(""); // NOI18N
-
-            labelArray[i].setPreferredSize(new java.awt.Dimension(48, 61));
-
-            jPanel2.add(labelArray[i]);
-        }
-    }
-
-    private void setPosition() {
-        Dimension screenSize = Toolkit.getDefaultToolkit().getScreenSize();
-        
-        this.startPosX = screenSize.getWidth() - this.getSize().getWidth() - 30;
-        this.startPosY = 30;
-        
-        this.setLocation((int) this.startPosX, (int) this.startPosY);
-    }
 }
