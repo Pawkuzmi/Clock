@@ -7,12 +7,12 @@ import javax.swing.*;
  *
  * @author Paweł
  */
-public class DayWindows {
+public class MyCalendar {
     
     JLabel[] daysArray;
     JInternalFrame frame;
     
-    public DayWindows(JLabel[] daysArray, JInternalFrame frame){
+    public MyCalendar(JLabel[] daysArray, JInternalFrame frame){
         
         this.daysArray = daysArray;  
         this.frame = frame;

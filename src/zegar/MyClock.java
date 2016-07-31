@@ -8,12 +8,12 @@ import javax.swing.JTextField;
  *
  * @author Paweł
  */
-public class Clock extends Thread{
+public class MyClock extends Thread{
     
     private JTextField dateTextField;
     private JTextField hourTextField;
     
-    public Clock(JTextField dateTextField, JTextField hourTextField){
+    public MyClock(JTextField dateTextField, JTextField hourTextField){
         
         this.dateTextField = dateTextField;
         this.hourTextField = hourTextField;

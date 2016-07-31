@@ -1,7 +1,12 @@
 package zegar;
 
 import java.awt.Dimension;
+import java.awt.Frame;
 import java.awt.Toolkit;
+import java.awt.event.ActionEvent;
+import java.awt.event.ActionListener;
+import java.awt.event.MouseEvent;
+import java.awt.event.MouseListener;
 import java.util.Calendar;
 import java.util.GregorianCalendar;
 import javax.swing.Icon;
@@ -10,25 +15,28 @@ import javax.swing.Icon;
  *
  * @author Paweł
  */
-public class Zegar extends javax.swing.JDialog {
+public class Widget extends javax.swing.JDialog {
 
     
     
-    public Zegar(java.awt.Frame parent, boolean modal) {
+    public Widget(java.awt.Frame parent, boolean modal) {
         super(parent, modal);
         initComponents();           // starting window dimension 351, 175; win dim with calendar 351, 500; 
+        this.parent = parent;
+        dataBase = new EventsDataBase();
         
         setPosition();
               
         createDayLabels();
        
-        myCalendar = new DayWindows(labelArray, CalendarInternalFrame); 
+        myCalendar = new MyCalendar(labels, CalendarInternalFrame); 
         myCalendar.setupCalendar();         // starting calendar day-by-day view in extension
         
-        myClock = new Clock(dateTextField, hourTextField);
+        myClock = new MyClock(dateTextField, hourTextField);
         
         myClock.start();
   
+        disableUnusedLabels();
     }
     
     
@@ -51,7 +59,7 @@ public class Zegar extends javax.swing.JDialog {
         hourTextField = new javax.swing.JTextField();
         background = new javax.swing.JLabel();
         CalendarInternalFrame = new javax.swing.JInternalFrame();
-        jPanel1 = new javax.swing.JPanel();
+        daysOfWeekPanel = new javax.swing.JPanel();
         mondayLabel = new javax.swing.JLabel();
         tuesdayLabel = new javax.swing.JLabel();
         wednesdayLabel = new javax.swing.JLabel();
@@ -59,7 +67,7 @@ public class Zegar extends javax.swing.JDialog {
         fridayLabel = new javax.swing.JLabel();
         saturdayLabel = new javax.swing.JLabel();
         sundayLabel = new javax.swing.JLabel();
-        jPanel2 = new javax.swing.JPanel();
+        tilesPanel = new javax.swing.JPanel();
         backgroundInternal = new javax.swing.JLabel();
 
         jTextArea1.setColumns(20);
@@ -73,6 +81,7 @@ public class Zegar extends javax.swing.JDialog {
         setUndecorated(true);
         setPreferredSize(new java.awt.Dimension(351, 175));
         setResizable(false);
+        setSize(new java.awt.Dimension(351, 175));
         getContentPane().setLayout(new org.netbeans.lib.awtextra.AbsoluteLayout());
 
         extendButton.setBackground(new java.awt.Color(102, 255, 102));
@@ -129,42 +138,42 @@ public class Zegar extends javax.swing.JDialog {
         CalendarInternalFrame.setVisible(true);
         CalendarInternalFrame.getContentPane().setLayout(new org.netbeans.lib.awtextra.AbsoluteLayout());
 
-        jPanel1.setLayout(new java.awt.GridLayout(1, 7, 22, 0));
+        daysOfWeekPanel.setLayout(new java.awt.GridLayout(1, 7, 22, 0));
 
         mondayLabel.setFont(new java.awt.Font("High Tower Text", 2, 14)); // NOI18N
         mondayLabel.setText("Mon");
-        jPanel1.add(mondayLabel);
+        daysOfWeekPanel.add(mondayLabel);
 
         tuesdayLabel.setFont(new java.awt.Font("High Tower Text", 2, 14)); // NOI18N
         tuesdayLabel.setText("Tue");
-        jPanel1.add(tuesdayLabel);
+        daysOfWeekPanel.add(tuesdayLabel);
 
         wednesdayLabel.setFont(new java.awt.Font("High Tower Text", 2, 14)); // NOI18N
         wednesdayLabel.setText("Wed");
-        jPanel1.add(wednesdayLabel);
+        daysOfWeekPanel.add(wednesdayLabel);
 
         thursdayLabel.setFont(new java.awt.Font("High Tower Text", 2, 14)); // NOI18N
         thursdayLabel.setText("Thu");
-        jPanel1.add(thursdayLabel);
+        daysOfWeekPanel.add(thursdayLabel);
 
         fridayLabel.setFont(new java.awt.Font("High Tower Text", 2, 14)); // NOI18N
         fridayLabel.setText("Fri");
-        jPanel1.add(fridayLabel);
+        daysOfWeekPanel.add(fridayLabel);
 
         saturdayLabel.setFont(new java.awt.Font("High Tower Text", 2, 14)); // NOI18N
         saturdayLabel.setText("Sat");
-        jPanel1.add(saturdayLabel);
+        daysOfWeekPanel.add(saturdayLabel);
 
         sundayLabel.setFont(new java.awt.Font("High Tower Text", 2, 14)); // NOI18N
         sundayLabel.setText("Sun");
-        jPanel1.add(sundayLabel);
+        daysOfWeekPanel.add(sundayLabel);
 
-        CalendarInternalFrame.getContentPane().add(jPanel1, new org.netbeans.lib.awtextra.AbsoluteConstraints(15, 5, -1, -1));
+        CalendarInternalFrame.getContentPane().add(daysOfWeekPanel, new org.netbeans.lib.awtextra.AbsoluteConstraints(15, 5, -1, -1));
 
-        jPanel2.setOpaque(false);
-        jPanel2.setPreferredSize(new java.awt.Dimension(340, 270));
-        jPanel2.setLayout(new java.awt.GridLayout(5, 7));
-        CalendarInternalFrame.getContentPane().add(jPanel2, new org.netbeans.lib.awtextra.AbsoluteConstraints(-2, 24, -1, -1));
+        tilesPanel.setOpaque(false);
+        tilesPanel.setPreferredSize(new java.awt.Dimension(340, 270));
+        tilesPanel.setLayout(new java.awt.GridLayout(5, 7));
+        CalendarInternalFrame.getContentPane().add(tilesPanel, new org.netbeans.lib.awtextra.AbsoluteConstraints(-2, 24, -1, -1));
         CalendarInternalFrame.getContentPane().add(backgroundInternal, new org.netbeans.lib.awtextra.AbsoluteConstraints(0, 25, 333, 267));
 
         getContentPane().add(CalendarInternalFrame, new org.netbeans.lib.awtextra.AbsoluteConstraints(0, 175, -1, 325));
@@ -199,31 +208,41 @@ public class Zegar extends javax.swing.JDialog {
         
     private void createDayLabels() {
 
-        labelArray = new javax.swing.JLabel[35];
+        labels = new javax.swing.JLabel[35];
         
-        for(int i = 0; i < 35; i++){
-            labelArray[i] = new javax.swing.JLabel();
+        for(int i = 0; i < labels.length; i++){
+            labels[i] = new javax.swing.JLabel();
             
-            labelArray[i].setFont(new java.awt.Font("High Tower Text", 3, 35));
+            labels[i].setFont(new java.awt.Font("High Tower Text", 3, 35));
             
-            labelArray[i].setHorizontalAlignment(javax.swing.SwingConstants.CENTER);
+            labels[i].setHorizontalAlignment(javax.swing.SwingConstants.CENTER);
 
-            labelArray[i].setVerticalAlignment(javax.swing.SwingConstants.TOP);
+            labels[i].setVerticalAlignment(javax.swing.SwingConstants.TOP);
 
-            labelArray[i].setMaximumSize(new java.awt.Dimension(48, 61));
+            labels[i].setMaximumSize(new java.awt.Dimension(48, 61));
 
-            labelArray[i].setMinimumSize(new java.awt.Dimension(48, 61));
+            labels[i].setMinimumSize(new java.awt.Dimension(48, 61));
 
-            labelArray[i].setIcon(new javax.swing.ImageIcon(getClass().getResource("/obrazy/dayWithoutEvent.png")));
+            labels[i].setIcon(new javax.swing.ImageIcon(getClass().getResource("/obrazy/dayWithoutEvent.png")));
 
-            labelArray[i].setIconTextGap(-39);
+            labels[i].setIconTextGap(-39);
             
-            labelArray[i].setName(""); // NOI18N
+            labels[i].setName(""); // NOI18N
 
-            labelArray[i].setPreferredSize(new java.awt.Dimension(48, 61));
+            labels[i].setPreferredSize(new java.awt.Dimension(48, 61));
+            
+            labels[i].addMouseListener(new MyListener());
             
 
-            jPanel2.add(labelArray[i]);
+            tilesPanel.add(labels[i]);
+        }
+    }
+    
+    private void disableUnusedLabels(){
+        for(int i = 0; i < labels.length; i++){
+            if(labels[i].getText().equals("")){
+                labels[i].setEnabled(false);
+            }
         }
     }
 
@@ -254,20 +273,21 @@ public class Zegar extends javax.swing.JDialog {
                 }
             }
         } catch (ClassNotFoundException ex) {
-            java.util.logging.Logger.getLogger(Zegar.class.getName()).log(java.util.logging.Level.SEVERE, null, ex);
+            java.util.logging.Logger.getLogger(Widget.class.getName()).log(java.util.logging.Level.SEVERE, null, ex);
         } catch (InstantiationException ex) {
-            java.util.logging.Logger.getLogger(Zegar.class.getName()).log(java.util.logging.Level.SEVERE, null, ex);
+            java.util.logging.Logger.getLogger(Widget.class.getName()).log(java.util.logging.Level.SEVERE, null, ex);
         } catch (IllegalAccessException ex) {
-            java.util.logging.Logger.getLogger(Zegar.class.getName()).log(java.util.logging.Level.SEVERE, null, ex);
+            java.util.logging.Logger.getLogger(Widget.class.getName()).log(java.util.logging.Level.SEVERE, null, ex);
         } catch (javax.swing.UnsupportedLookAndFeelException ex) {
-            java.util.logging.Logger.getLogger(Zegar.class.getName()).log(java.util.logging.Level.SEVERE, null, ex);
+            java.util.logging.Logger.getLogger(Widget.class.getName()).log(java.util.logging.Level.SEVERE, null, ex);
         }
+        //</editor-fold>
         //</editor-fold>
 
         /* Create and display the dialog */
         java.awt.EventQueue.invokeLater(new Runnable() {
             public void run() {
-                Zegar dialog = new Zegar(new javax.swing.JFrame(), true);
+                Widget dialog = new Widget(new javax.swing.JFrame(), true);
                 dialog.addWindowListener(new java.awt.event.WindowAdapter() {
                     @Override
                     public void windowClosing(java.awt.event.WindowEvent e) {
@@ -285,26 +305,62 @@ public class Zegar extends javax.swing.JDialog {
     private javax.swing.JLabel backgroundInternal;
     private javax.swing.ButtonGroup buttonGroup1;
     private javax.swing.JTextField dateTextField;
+    private javax.swing.JPanel daysOfWeekPanel;
     private javax.swing.JButton exitButton;
     private javax.swing.JButton extendButton;
     private javax.swing.JLabel fridayLabel;
     private javax.swing.JTextField hourTextField;
-    private javax.swing.JPanel jPanel1;
-    private javax.swing.JPanel jPanel2;
     private javax.swing.JScrollPane jScrollPane1;
     private javax.swing.JTextArea jTextArea1;
     private javax.swing.JLabel mondayLabel;
     private javax.swing.JLabel saturdayLabel;
     private javax.swing.JLabel sundayLabel;
     private javax.swing.JLabel thursdayLabel;
+    private javax.swing.JPanel tilesPanel;
     private javax.swing.JLabel tuesdayLabel;
     private javax.swing.JLabel wednesdayLabel;
     // End of variables declaration//GEN-END:variables
     private boolean extendBool = false;
     private double startPosX, startPosY;
     
-    private javax.swing.JLabel[] labelArray;
-    private DayWindows myCalendar;
+    private javax.swing.JLabel[] labels;
+    private MyCalendar myCalendar;
     private Thread myClock;
     
+    private Frame parent;
+    
+    private EventsDataBase dataBase;
+    
+    
+    private class MyListener implements MouseListener{
+
+        @Override
+        public void mouseClicked(MouseEvent e) {
+            if(e.getSource() == labels[7]){
+                
+                new ChoiceDialog(parent, true, dataBase, labels[7].getText());
+            }
+        }
+
+        @Override
+        public void mousePressed(MouseEvent e) {
+         //   throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
+        }
+
+        @Override
+        public void mouseReleased(MouseEvent e) {
+         //   throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
+        }
+
+        @Override
+        public void mouseEntered(MouseEvent e) {
+         //   throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
+        }
+
+        @Override
+        public void mouseExited(MouseEvent e) {
+          //  throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
+        }
+        
+    }
 }
