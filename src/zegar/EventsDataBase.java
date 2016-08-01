@@ -3,6 +3,7 @@ package zegar;
 import java.sql.Connection;
 import java.sql.DriverManager;
 import java.sql.PreparedStatement;
+import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.sql.Statement;
 import java.util.logging.Level;
@@ -91,6 +92,48 @@ public class EventsDataBase {
             return;
         }
         System.out.println("Deleted from " + this.tblName);
+    }
+    
+    public void showEverything(){
+        try {
+            String all = "SELECT * FROM " + this.tblName;
+            
+            ResultSet result = stat.executeQuery(all);
+            int id;
+            String name, hour, description, day;
+            while(result.next()) {
+                id = result.getInt("id");
+                name = result.getString("name");
+                day = result.getString("dayOfMonth");
+                hour = result.getString("hour");
+                description = result.getString("description");
+                
+                System.out.println(id + " "+ name + " " +day+ " "+ hour+ " "+ description);
+            }
+        } catch (SQLException e) {
+            e.printStackTrace();
+            
+        }
+    }
+
+    String[] getEvents(String day) {
+        String query = "SELECT * FROM " + this.tblName + " WHERE dayOfMonth = '" + day +"'";
+        String[] events = new String[15];
+        
+        try {   
+            ResultSet result = stat.executeQuery(query);
+            int i=0;
+            while(result.next()){
+                events[i] = result.getString("name") + " " + result.getString("hour") + " - " + result.getString("description");
+                i++;
+            }
+        } 
+        catch (SQLException ex) {
+            System.err.println("Unable to get event acording to dayOfMonth");
+            ex.printStackTrace();
+        }
+        
+        return events;
     }
     
 }

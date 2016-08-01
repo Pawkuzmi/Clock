@@ -25,6 +25,9 @@ public class Widget extends javax.swing.JDialog {
         this.parent = parent;
         dataBase = new EventsDataBase();
         
+        if(new GregorianCalendar().get(Calendar.DAY_OF_MONTH) == 1)
+            dataBase.deleteEverything();
+        
         setPosition();
               
         createDayLabels();
