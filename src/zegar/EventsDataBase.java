@@ -6,6 +6,7 @@ import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.sql.Statement;
+import java.util.ArrayList;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 
@@ -116,15 +117,23 @@ public class EventsDataBase {
         }
     }
 
-    String[] getEvents(String day) {
+    ArrayList<Event> getEventsIn(String day) {
         String query = "SELECT * FROM " + this.tblName + " WHERE dayOfMonth = '" + day +"'";
-        String[] events = new String[15];
+        ArrayList<Event> events = new ArrayList<Event>();
         
         try {   
             ResultSet result = stat.executeQuery(query);
-            int i=0;
-            while(result.next()){
-                events[i] = result.getString("name") + " " + result.getString("hour") + " - " + result.getString("description");
+            int i=0, id;
+            String n, d, h, desc;
+            while(result.next()){ 
+                id = result.getInt(1);
+                n = result.getString(2);
+                d = result.getString(3);
+                h = result.getString(4);
+                desc = result.getString(5);
+                
+                events.add(new Event(id, n, d, h, desc)) ;
+                
                 i++;
             }
         } 
@@ -133,7 +142,31 @@ public class EventsDataBase {
             ex.printStackTrace();
         }
         
+        events.trimToSize();
         return events;
+    }
+    
+    public boolean[] daysWithEvent(){
+        
+        boolean[] tab = new boolean[32];
+        
+        try {
+            String all = "SELECT * FROM " + this.tblName;
+            
+            ResultSet result = stat.executeQuery(all);
+            
+            while(result.next()) {
+                
+                int dayWithEvent = Integer.valueOf( result.getString("dayOfMonth") );
+                
+                tab[dayWithEvent] = true;
+            }
+        } 
+        catch (SQLException e) {
+            e.printStackTrace();
+            
+        }
+        return tab;
     }
     
 }

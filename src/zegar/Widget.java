@@ -33,7 +33,7 @@ public class Widget extends javax.swing.JDialog {
         createDayLabels();
        
         myCalendar = new MyCalendar(labels, CalendarInternalFrame); 
-        myCalendar.setupCalendar();         // starting calendar day-by-day view in extension
+        myCalendar.setupCalendar(dataBase.daysWithEvent());         // starting calendar day-by-day view in extension
         
         myClock = new MyClock(dateTextField, hourTextField);
         
@@ -226,7 +226,7 @@ public class Widget extends javax.swing.JDialog {
 
             labels[i].setMinimumSize(new java.awt.Dimension(48, 61));
 
-            labels[i].setIcon(new javax.swing.ImageIcon(getClass().getResource("/obrazy/dayWithoutEvent.png")));
+            labels[i].setIcon(new javax.swing.ImageIcon(getClass().getResource("/obrazy/day.png")));
 
             labels[i].setIconTextGap(-39);
             
@@ -332,16 +332,17 @@ public class Widget extends javax.swing.JDialog {
     
     private Frame parent;
     
-    private EventsDataBase dataBase;
-    
+    private EventsDataBase dataBase;    
     
     private class MyListener implements MouseListener{
 
         @Override
         public void mouseClicked(MouseEvent e) {
-            if(e.getSource() == labels[7]){
+            for(int i = 0; i < 30; i++){
                 
-                new ChoiceDialog(parent, true, dataBase, labels[7].getText());
+                if(e.getSource() == labels[i])
+                    new ChoiceDialog(parent, true, dataBase, labels[i].getText());
+                
             }
         }
 

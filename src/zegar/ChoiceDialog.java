@@ -7,6 +7,7 @@ package zegar;
 
 import java.awt.CardLayout;
 import java.awt.GridLayout;
+import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.GregorianCalendar;
 import javax.swing.JLabel;
@@ -70,6 +71,8 @@ public class ChoiceDialog extends javax.swing.JDialog {
         backShowButton = new javax.swing.JButton();
         editShowPanel = new javax.swing.JButton();
         eventsListShowPanel = new javax.swing.JPanel();
+        jScrollPane2 = new javax.swing.JScrollPane();
+        eventsList = new javax.swing.JList<>();
 
         jLabel3.setText("jLabel3");
 
@@ -237,7 +240,38 @@ public class ChoiceDialog extends javax.swing.JDialog {
         showPanel.add(buttonsPanel2, java.awt.BorderLayout.SOUTH);
 
         eventsListShowPanel.setBackground(new java.awt.Color(51, 255, 0));
-        eventsListShowPanel.setLayout(new java.awt.GridLayout());
+
+        eventsList.setBackground(new java.awt.Color(66, 222, 0));
+        eventsList.setFont(new java.awt.Font("Times New Roman", 0, 18)); // NOI18N
+        eventsList.setModel(new javax.swing.AbstractListModel<String>() {
+            String[] strings = { "Item 1", "Item 2", "Item 3", "Item 4", "Item 5" };
+            public int getSize() { return strings.length; }
+            public String getElementAt(int i) { return strings[i]; }
+        });
+        eventsList.setSelectionBackground(new java.awt.Color(51, 255, 0));
+        jScrollPane2.setViewportView(eventsList);
+
+        javax.swing.GroupLayout eventsListShowPanelLayout = new javax.swing.GroupLayout(eventsListShowPanel);
+        eventsListShowPanel.setLayout(eventsListShowPanelLayout);
+        eventsListShowPanelLayout.setHorizontalGroup(
+            eventsListShowPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+            .addGap(0, 319, Short.MAX_VALUE)
+            .addGroup(eventsListShowPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                .addGroup(eventsListShowPanelLayout.createSequentialGroup()
+                    .addContainerGap()
+                    .addComponent(jScrollPane2, javax.swing.GroupLayout.DEFAULT_SIZE, 299, Short.MAX_VALUE)
+                    .addContainerGap()))
+        );
+        eventsListShowPanelLayout.setVerticalGroup(
+            eventsListShowPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+            .addGap(0, 181, Short.MAX_VALUE)
+            .addGroup(eventsListShowPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, eventsListShowPanelLayout.createSequentialGroup()
+                    .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                    .addComponent(jScrollPane2, javax.swing.GroupLayout.PREFERRED_SIZE, 155, javax.swing.GroupLayout.PREFERRED_SIZE)
+                    .addContainerGap(15, Short.MAX_VALUE)))
+        );
+
         showPanel.add(eventsListShowPanel, java.awt.BorderLayout.CENTER);
 
         mainPanel.add(showPanel, "showPanel");
@@ -291,26 +325,25 @@ public class ChoiceDialog extends javax.swing.JDialog {
     }//GEN-LAST:event_cancelNewButtonActionPerformed
 
     private void showButtonActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_showButtonActionPerformed
-        
-        
-        GridLayout grid = (GridLayout) eventsListShowPanel.getLayout();
-        grid.setColumns(1);
-        
          
-        String[] events = database.getEvents(this.day);
-        grid.setRows(events.length);
+        ArrayList<Event> events = database.getEventsIn(this.day);
+        
+        if(events.size() == 0 ){
+            System.err.println("Pusta baza eventó tego dnia");
+        }
+        
+        String[] tab = new String[15];
+        for(int i = 0; i < events.size(); i++){
+            
+            tab[i] = events.get(i).toString();
+        }
+    //    eventsList.setListData(null);
+        eventsList.setListData(tab);
+      //  eventsList.setVisible(true);
+        
         CardLayout card = (CardLayout) mainPanel.getLayout();
         card.show(mainPanel, "showPanel");
         
-        if(events.length == 0 && false){
-            eventsListShowPanel.add(new JLabel("No event planned for today"));
-        }
-        
-        
-        
-        for(int i = 0; i < events.length; i++){
-            eventsListShowPanel.add(new JLabel(events[i]));
-        }
     }//GEN-LAST:event_showButtonActionPerformed
 
     private void backShowButtonActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_backShowButtonActionPerformed
@@ -340,6 +373,7 @@ public class ChoiceDialog extends javax.swing.JDialog {
     private javax.swing.JTextArea descriptionTextArea;
     private javax.swing.JButton editButton;
     private javax.swing.JButton editShowPanel;
+    private javax.swing.JList<String> eventsList;
     private javax.swing.JPanel eventsListShowPanel;
     private javax.swing.JPanel first;
     private javax.swing.JTextField hourTextFiels;
@@ -349,6 +383,7 @@ public class ChoiceDialog extends javax.swing.JDialog {
     private javax.swing.JLabel jLabel4;
     private javax.swing.JLabel jLabel5;
     private javax.swing.JScrollPane jScrollPane1;
+    private javax.swing.JScrollPane jScrollPane2;
     private javax.swing.JPanel mainPanel;
     private javax.swing.JTextField nameTextField;
     private javax.swing.JButton newButton;

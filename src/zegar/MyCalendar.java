@@ -11,6 +11,7 @@ public class MyCalendar {
     
     JLabel[] daysArray;
     JInternalFrame frame;
+    private boolean[] daysWithEvent;
     
     public MyCalendar(JLabel[] daysArray, JInternalFrame frame){
         
@@ -19,7 +20,9 @@ public class MyCalendar {
        
     }
     
-    public void setupCalendar(){
+    public void setupCalendar(boolean[] tab){
+        this.daysWithEvent = tab;
+        
         Calendar tempDate = new GregorianCalendar(); 
         Calendar currentDate = new GregorianCalendar();
         
@@ -37,11 +40,24 @@ public class MyCalendar {
                 continue;
             
             if(currentDate.get(Calendar.DAY_OF_MONTH) == day)
-                daysArray[i-2].setIcon(new javax.swing.ImageIcon(getClass().getResource("/obrazy/currentDay.png")));
+                daysArray[i-2].setIcon(new javax.swing.ImageIcon(getClass().getResource("/obrazy/" + selectIcon(day) + "Current.png")));
+            else
+                daysArray[i-2].setIcon(new javax.swing.ImageIcon(getClass().getResource("/obrazy/" + selectIcon(day) + ".png")));
             
             daysArray[i-2].setText(Integer.toString(day)); //i-1 because arrays are counting from 0, not 1;
             
         }
+    }
+    
+    private String selectIcon(int number) {
+        String iconka = "day";
+        
+        
+        if(this.daysWithEvent[number])
+            iconka += "Event";
+       
+        
+        return iconka;
     }
     
     public void setCalendarFrameTitle(Calendar date){
@@ -92,5 +108,7 @@ public class MyCalendar {
         
         frame.setTitle(title + " " + date.get(Calendar.YEAR));        
     }
+
+    
     
 }

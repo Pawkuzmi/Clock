@@ -59,5 +59,10 @@ public class Event {
         this.description = description;
     }
     
-    
+    @Override
+    public String toString(){
+        String i = Integer.toString(this.ID);
+        
+        return i + ". " + this.name + ": " + this.hour + " " + this.description;
+    }
 }
