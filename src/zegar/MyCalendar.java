@@ -57,7 +57,12 @@ public class MyCalendar {
             iconka += "Event";
        
         
+        
         return iconka;
+    }
+    
+    public void resetIcons(){
+     
     }
     
     public void setCalendarFrameTitle(Calendar date){

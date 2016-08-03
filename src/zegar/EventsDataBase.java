@@ -95,6 +95,22 @@ public class EventsDataBase {
         System.out.println("Deleted from " + this.tblName);
     }
     
+    public void deleteEventsIn( String day){
+        String deletion = "DELETE FROM " + this.tblName + " WHERE dayOfMonth = '" + day +"'";
+        System.out.println(deletion);
+        
+        try {
+            PreparedStatement prepStat = conn.prepareStatement(deletion);
+            prepStat.execute();
+        } 
+        catch (SQLException ex) {
+            System.err.println("unable to delete *");
+            ex.printStackTrace();
+            return;
+        }
+        System.out.println("Deleted from " + this.tblName);
+    }
+    
     public void showEverything(){
         try {
             String all = "SELECT * FROM " + this.tblName;

@@ -23,6 +23,7 @@ public class Widget extends javax.swing.JDialog {
         super(parent, modal);
         initComponents();           // starting window dimension 351, 175; win dim with calendar 351, 500; 
         this.parent = parent;
+        
         dataBase = new EventsDataBase();
         
         if(new GregorianCalendar().get(Calendar.DAY_OF_MONTH) == 1)
@@ -33,7 +34,10 @@ public class Widget extends javax.swing.JDialog {
         createDayLabels();
        
         myCalendar = new MyCalendar(labels, CalendarInternalFrame); 
-        myCalendar.setupCalendar(dataBase.daysWithEvent());         // starting calendar day-by-day view in extension
+        
+          // starting calendar day-by-day view in extension
+          //param = array with info about which days has events
+        myCalendar.setupCalendar(dataBase.daysWithEvent());       
         
         myClock = new MyClock(dateTextField, hourTextField);
         
@@ -341,7 +345,7 @@ public class Widget extends javax.swing.JDialog {
             for(int i = 0; i < 30; i++){
                 
                 if(e.getSource() == labels[i])
-                    new ChoiceDialog(parent, true, dataBase, labels[i].getText());
+                    new ChoiceDialog(parent, true, dataBase, labels[i].getText(), myCalendar);
                 
             }
         }

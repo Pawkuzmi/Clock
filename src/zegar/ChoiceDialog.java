@@ -6,10 +6,10 @@
 package zegar;
 
 import java.awt.CardLayout;
-import java.awt.GridLayout;
 import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.GregorianCalendar;
+import javax.swing.JInternalFrame;
 import javax.swing.JLabel;
 
 /**
@@ -21,15 +21,18 @@ public class ChoiceDialog extends javax.swing.JDialog {
     /**
      * Creates new form ChoiceDialog
      */
-    public ChoiceDialog(java.awt.Frame parent, boolean modal, EventsDataBase database, String day) {
+    public ChoiceDialog(java.awt.Frame parent, boolean modal, EventsDataBase database, String day,
+            MyCalendar myCalendar) {
+        
         super(parent, modal);
         initComponents();
         this.setLocationRelativeTo(null);
-        this.day = day;
+        this.selectedDay = day;
+        this.myCalendar = myCalendar;
         
         GregorianCalendar date = new GregorianCalendar();
         int month = date.get(Calendar.MONTH) + 1;
-        this.setTitle( this.day + "." + month + "." + date.get(Calendar.YEAR));
+        this.setTitle( this.selectedDay + "." + month + "." + date.get(Calendar.YEAR));
         
         
         this.database = database;
@@ -101,6 +104,7 @@ public class ChoiceDialog extends javax.swing.JDialog {
         buttonsPanel.add(newButton);
 
         editButton.setText("edit event");
+        editButton.setEnabled(false);
         editButton.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
                 editButtonActionPerformed(evt);
@@ -230,6 +234,7 @@ public class ChoiceDialog extends javax.swing.JDialog {
         buttonsPanel2.add(backShowButton);
 
         editShowPanel.setText("edit events");
+        editShowPanel.setEnabled(false);
         editShowPanel.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
                 editShowPanelActionPerformed(evt);
@@ -303,8 +308,10 @@ public class ChoiceDialog extends javax.swing.JDialog {
 
     private void saveNewButtonActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_saveNewButtonActionPerformed
         
-        Event event = new Event( nameTextField.getText(), this.day, hourTextFiels.getText(), descriptionTextArea.getText()); 
+        Event event = new Event( nameTextField.getText(), this.selectedDay, hourTextFiels.getText(), descriptionTextArea.getText()); 
         database.insert(event);
+        
+        myCalendar.setupCalendar(database.daysWithEvent());
         
         CardLayout card = (CardLayout) mainPanel.getLayout();
         
@@ -315,7 +322,8 @@ public class ChoiceDialog extends javax.swing.JDialog {
     }//GEN-LAST:event_saveNewButtonActionPerformed
 
     private void deleteButtonActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_deleteButtonActionPerformed
-        database.deleteEverything();
+        database.deleteEventsIn(selectedDay);
+        myCalendar.setupCalendar(database.daysWithEvent());
     }//GEN-LAST:event_deleteButtonActionPerformed
 
     private void cancelNewButtonActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_cancelNewButtonActionPerformed
@@ -326,7 +334,7 @@ public class ChoiceDialog extends javax.swing.JDialog {
 
     private void showButtonActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_showButtonActionPerformed
          
-        ArrayList<Event> events = database.getEventsIn(this.day);
+        ArrayList<Event> events = database.getEventsIn(this.selectedDay);
         
         if(events.size() == 0 ){
             System.err.println("Pusta baza eventó tego dnia");
@@ -338,7 +346,8 @@ public class ChoiceDialog extends javax.swing.JDialog {
             tab[i] = events.get(i).toString();
         }
     //    eventsList.setListData(null);
-        eventsList.setListData(tab);
+        eventsList.setListData(tab);  //2 kliki w "show niszczą eventsList"
+        
       //  eventsList.setVisible(true);
         
         CardLayout card = (CardLayout) mainPanel.getLayout();
@@ -392,7 +401,8 @@ public class ChoiceDialog extends javax.swing.JDialog {
     private javax.swing.JButton showButton;
     private javax.swing.JPanel showPanel;
     // End of variables declaration//GEN-END:variables
-    private String day;
+    private String selectedDay;
     private EventsDataBase database;
+    private MyCalendar myCalendar;
     
 }
