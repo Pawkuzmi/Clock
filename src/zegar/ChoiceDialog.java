@@ -337,18 +337,16 @@ public class ChoiceDialog extends javax.swing.JDialog {
         ArrayList<Event> events = database.getEventsIn(this.selectedDay);
         
         if(events.size() == 0 ){
-            System.err.println("Pusta baza eventó tego dnia");
+            System.err.println("Pusta baza eventów tego dnia");
         }
         
         String[] tab = new String[15];
         for(int i = 0; i < events.size(); i++){
             
-            tab[i] = events.get(i).toString();
+            tab[i] = events.get(i).toString(); // hiding event ordinal number
         }
-    //    eventsList.setListData(null);
-        eventsList.setListData(tab);  //2 kliki w "show niszczą eventsList"
-        
-      //  eventsList.setVisible(true);
+    
+        eventsList.setListData(tab);  //2 clicks in "showbutton" destroy eventsList
         
         CardLayout card = (CardLayout) mainPanel.getLayout();
         card.show(mainPanel, "showPanel");

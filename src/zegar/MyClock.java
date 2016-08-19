@@ -57,10 +57,10 @@ public class MyClock extends Thread{
                     godz += "0" + Integer.toString(sec);    //  mniejszą niz 10  
                 
                 else if(sec > 9 && sec < 20) 
-                    godz += dodanieSpacji(sec);
+                    godz += addSpace(sec);
                 
                 else if(sec % 10 == 1) 
-                    godz += dodanieZera(sec); // dodanie spacji między cyfry liczby konczącej się na '1'
+                    godz += addZero(sec); // dodanie spacji między cyfry liczby konczącej się na '1'
                 
                 else 
                     godz += Integer.toString(sec);
@@ -75,14 +75,14 @@ public class MyClock extends Thread{
                 
             }
         } 
-        //dodanie spacji między cyfry liczb konczących się jedynką
-    public String dodanieZera(int sec){
+        //add zero between cifres of numbers ending with "1" 
+    public String addZero(int sec){
         String second = Integer.toString(sec);
         return second.charAt(0) + " " + second.charAt(1);
     }
     
-    //dodanie spacji przed sekundę między 10 a 19
-    public String dodanieSpacji(int sec){ 
+    //add space before seconds between 10 & 19
+    public String addSpace(int sec){ 
         String second = Integer.toString(sec);
         if(sec == 11) 
             return " " + second.charAt(0) + " " + second.charAt(1);
