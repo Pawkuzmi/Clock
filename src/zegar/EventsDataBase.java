@@ -7,6 +7,8 @@ import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.sql.Statement;
 import java.util.ArrayList;
+import java.util.Calendar;
+import java.util.GregorianCalendar;
 
 /**
  *
@@ -40,6 +42,8 @@ public class EventsDataBase {
         }
         
         createTable();
+        
+        algorithmForDeleteingAllEventsInNewMonth();
     }
     
     public void createTable(){
@@ -54,6 +58,85 @@ public class EventsDataBase {
             ex.printStackTrace();
         }
     }
+    
+    private void algorithmForDeleteingAllEventsInNewMonth(){
+        createPreviousMonthTable();
+        insertCurrentMonth();
+        checkIfDeleteAllEventsBecauseNewMonth();
+    }
+    
+    private void createPreviousMonthTable(){
+        String createEventsTable = "CREATE TABLE IF NOT EXISTS previousMonth (id INTEGER PRIMARY KEY AUTOINCREMENT, "
+                + "month INTEGER)";
+        
+        try {
+            stat.execute(createEventsTable);
+        } 
+        catch (SQLException ex) {
+            System.err.println("Creating previousMonth table in DB failed");
+            ex.printStackTrace();
+        }
+    }
+    
+    private void insertCurrentMonth() {
+        String insertion = "INSERT INTO previousMonth VALUES(NULL, ?)";
+        
+        try {
+            PreparedStatement prepStat = conn.prepareStatement(insertion);
+            
+            prepStat.setInt(1, new GregorianCalendar().get(Calendar.MONTH) + 1);
+            
+            prepStat.execute();
+        } 
+        catch (SQLException ex) {
+            System.err.println("insertion to previousMonth failed");
+            ex.printStackTrace();
+            return;
+        }
+    }
+    
+    private void checkIfDeleteAllEventsBecauseNewMonth(){
+        
+        ArrayList<Integer> months;
+        months = new ArrayList<>();
+        
+        try {
+            String all = "SELECT * FROM previousMonth";
+            
+            ResultSet result = stat.executeQuery(all);
+            int id, currentMonth;
+            
+            while(result.next()) {
+                id = result.getInt("id");
+                currentMonth = result.getInt("month");
+                
+                months.add(currentMonth);
+                System.out.println(id + " "+ currentMonth);
+            }
+        } catch (SQLException e) {
+            e.printStackTrace();  
+        }
+        
+        if(months.size() > 1 && ( months.get(months.size()-1) != months.get(months.size()-2) ) ){
+            deleteAllFrom("previousMonth");
+        }
+    }
+    
+    private void deleteAllFrom(String previousMonth) {
+        String deletion = "DELETE FROM " +  previousMonth ;
+                
+        try {
+            PreparedStatement prepStat = conn.prepareStatement(deletion);
+            prepStat.execute();
+        } 
+        catch (SQLException ex) {
+            System.err.println("unable to delete from " + previousMonth);
+            ex.printStackTrace();
+            return;
+        }
+        System.out.println("Deleted from " + previousMonth);
+    }
+    
     
     public void insert(Event event){
         String insertion = "INSERT INTO " + this.tblName + " VALUES(NULL, ?, ?, ?, ?)";
@@ -133,7 +216,7 @@ public class EventsDataBase {
 
     ArrayList<Event> getEventsIn(String day) {
         String query = "SELECT * FROM " + this.tblName + " WHERE dayOfMonth = '" + day +"'";
-        ArrayList<Event> events = new ArrayList<Event>();
+        ArrayList<Event> events = new ArrayList<>();
         
         try {   
             ResultSet result = stat.executeQuery(query);
@@ -182,5 +265,8 @@ public class EventsDataBase {
         }
         return tab;
     }
+
+    
+
     
 }
