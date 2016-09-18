@@ -33,17 +33,17 @@ public class Widget extends javax.swing.JDialog {
               
         createDayLabels();
        
-        myCalendar = new MyCalendar(labels, CalendarInternalFrame); 
+        myCalendar = new MyCalendar(labels, CalendarInternalFrame, dataBase.daysWithEvent()); 
         
           // starting calendar day-by-day view in extension
           //param = array with info about which days has events
-        myCalendar.setupCalendar(dataBase.daysWithEvent());       
+        myCalendar.start();
         
         myClock = new MyClock(dateTextField, hourTextField);
         
         myClock.start();
   
-        disableUnusedLabels();
+        //disableUnusedLabels();
     }
     
     
@@ -238,6 +238,8 @@ public class Widget extends javax.swing.JDialog {
 
             labels[i].setPreferredSize(new java.awt.Dimension(48, 61));
             
+            labels[i].setText("");
+            
             labels[i].addMouseListener(new MyListener());
             
 
@@ -245,13 +247,7 @@ public class Widget extends javax.swing.JDialog {
         }
     }
     
-    private void disableUnusedLabels(){
-        for(int i = 0; i < labels.length; i++){
-            if(labels[i].getText().equals("")){
-                labels[i].setEnabled(false);
-            }
-        }
-    }
+    
 
     private void setPosition() {
         Dimension screenSize = Toolkit.getDefaultToolkit().getScreenSize();
@@ -342,9 +338,9 @@ public class Widget extends javax.swing.JDialog {
 
         @Override
         public void mouseClicked(MouseEvent e) {
-            for(int i = 0; i < 30; i++){
+            for(int i = 0; i < labels.length; i++){
                 
-                if(e.getSource() == labels[i])
+                if(e.getSource() == labels[i] && !labels[i].getText().equals(""))
                     new ChoiceDialog(parent, true, dataBase, labels[i].getText(), myCalendar);
                 
             }

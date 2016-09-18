@@ -7,21 +7,36 @@ import javax.swing.*;
  *
  * @author Paweł
  */
-public class MyCalendar {
+public class MyCalendar extends Thread{
     
     JLabel[] daysArray;
     JInternalFrame frame;
     private boolean[] daysWithEvent;
     
-    public MyCalendar(JLabel[] daysArray, JInternalFrame frame){
+    public MyCalendar(JLabel[] daysArray, JInternalFrame frame, boolean[] tab){
         
         this.daysArray = daysArray;  
         this.frame = frame;
-       
+        this.daysWithEvent = tab;
     }
     
-    public void setupCalendar(boolean[] tab){
-        this.daysWithEvent = tab;
+    public void run(){
+        while (true){
+            this.setupCalendar();
+            
+            try{
+                Thread.sleep(2000);
+            }
+            catch(InterruptedException e){
+                e.printStackTrace();
+                System.err.println("Exc in myCalendar thread");
+            }
+            
+        }
+    }
+    
+    public void setupCalendar(){
+        
         
         Calendar tempDate = new GregorianCalendar(); 
         Calendar currentDate = new GregorianCalendar();
@@ -47,7 +62,22 @@ public class MyCalendar {
             daysArray[i-2].setText(Integer.toString(day)); //i-1 because arrays are counting from 0, not 1;
             
         }
+        disableUnusedLabels();
     }
+    
+    private void disableUnusedLabels(){
+        for(int i = 0; i < daysArray.length; i++){
+            
+            if(daysArray[i].getText().equals(""))
+                daysArray[i].setEnabled(false);
+        }
+    }
+
+    public void setDaysWithEvent(boolean[] daysWithEvent) {
+        this.daysWithEvent = daysWithEvent;
+    }
+    
+    
     
     private String selectIcon(int number) {
         String iconka = "day";

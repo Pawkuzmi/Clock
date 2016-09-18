@@ -311,7 +311,7 @@ public class ChoiceDialog extends javax.swing.JDialog {
         Event event = new Event( nameTextField.getText(), this.selectedDay, hourTextFiels.getText(), descriptionTextArea.getText()); 
         database.insert(event);
         
-        myCalendar.setupCalendar(database.daysWithEvent());
+        myCalendar.setDaysWithEvent(database.daysWithEvent());
         
         CardLayout card = (CardLayout) mainPanel.getLayout();
         
@@ -323,7 +323,7 @@ public class ChoiceDialog extends javax.swing.JDialog {
 
     private void deleteButtonActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_deleteButtonActionPerformed
         database.deleteEventsIn(selectedDay);
-        myCalendar.setupCalendar(database.daysWithEvent());
+        myCalendar.setDaysWithEvent(database.daysWithEvent());
     }//GEN-LAST:event_deleteButtonActionPerformed
 
     private void cancelNewButtonActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_cancelNewButtonActionPerformed
