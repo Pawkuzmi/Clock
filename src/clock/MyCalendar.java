@@ -54,12 +54,15 @@ public class MyCalendar extends Thread{
             if(i-2 <0) // if first day of month is Sunday
                 continue;
             
+            if(i-2 >= daysArray.length) // if last day of month is Sunday
+                break;
+            
             if(currentDate.get(Calendar.DAY_OF_MONTH) == day)
                 daysArray[i-2].setIcon(new javax.swing.ImageIcon(getClass().getResource("/obrazy/" + selectIcon(day) + "Current.png")));
             else
                 daysArray[i-2].setIcon(new javax.swing.ImageIcon(getClass().getResource("/obrazy/" + selectIcon(day) + ".png")));
             
-            daysArray[i-2].setText(Integer.toString(day)); //i-1 because arrays are counting from 0, not 1;
+            daysArray[i-2].setText(Integer.toString(day)); //i-2 because arrays are counting from 0, not 1;
             
         }
         disableUnusedLabels();
